@@ -87,8 +87,7 @@ Once completed, navigate to the newly created KeyVault and take noe fo the *Vaul
 Then select *Secrets* in the left menu. Select *Generate/Import* and type a name for your secret (e.g. *blogsopenaikey*) and copy the OpenAI service key (KEY 1) into the Secret value. Take note of the secret name. 
 
 In the left section *Access control (IAM)* select *Add -> Add role assignment*. Assign yourself the following permissions:
-- **Key Vault Crypto Officer**: Allows you to see and change the secrets that you created. 
-- ****:
+- **Key Vault Secrets Office**: Allows you to see and change the secrets that you created. 
 
 ### Fabric
 
