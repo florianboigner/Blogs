@@ -2,6 +2,17 @@
 
 ![logo](resources/imgs/logo_nobg_s.png)
 
+**IMPORTANT DISCLAIMER**
+*This is an early alpha version which is not complete and work in progress. It will evolve in the coming weeks and progress will be documented here. If you have any feedback, please share it with me at florian.boigner@microsoft.com* 
+
+**Changelog**
+
+| Update | Version | Date | 
+| --- | --- | --- |
+| Initial version with limited functionality. Reporting and Power Platform not available yet | alpha 0.1.1 | 05/12/2024 |
+
+## Introduction
+
 Blogs is a solution that allows you to collect and *follow* online blogs that have an RSS Feed, automatically create a summary and get a Newsletter with the updates in your inbox. The functionality and solution will be extended over time and currently includes the following elements:
 - A [SharePoint online list](#sharepoint-list) to store the blogs
 - A Dataflow that retrieves the data from the list
@@ -125,7 +136,7 @@ Save the changes and then click *Publish*. It will show the changes to the envir
 
 ![A screenshot of the changes to the environment](resources/imgs/docs/environment-changes.png)
 
-<u>Note:</u> The publishing process can take quite long, but you can continue with the next task. Make sure that the process completes before running the solution. 
+<u>Note:</u> The publishing process can take quite long (about 15 minutes), but you can continue with the next task. Make sure that the process completes before running the solution. 
 
 #### Create Dataflow
 
