@@ -9,17 +9,18 @@
 
 | Update | Version | Date | 
 | --- | --- | --- |
-| Initial version with limited functionality. Reporting and Power Platform not available yet | alpha 0.1.1 | 05/12/2024 |
+| Initial version with limited functionality. Reporting and Power Platform not available yet | alpha 0.1.1 | 2024-12-05 |
+| Update with Power BI and Power Automate | alpha 0.1.3 | 2025-12-09 |
 
 ## Introduction
 
 Blogs is a solution that allows you to collect and *follow* online blogs that have an RSS Feed, automatically create a summary and get a Newsletter with the updates in your inbox. The functionality and solution will be extended over time and currently includes the following elements:
 - A [SharePoint online list](#sharepoint-list) to store the blogs
-- A Dataflow that retrieves the data from the list
-- Different notebooks that process the data, get the RSS feeds and summarize them
-- OpenAI service to create the summary and Azure KeyVault to store the secrets
-- A Power BI Semantic Model and Report to view the data
-- A Power Automate solution to send automatic emails
+- A [Dataflow](#create-dataflow) that retrieves the data from the list
+- [Different notebooks](#import-notebooks-and-create-environment) that process the data, get the RSS feeds and summarize them
+- [OpenAI](#openai) service to create the summary and [Azure KeyVault](#azure-keyvault) to store the secrets
+- A Power BI [Semantic Model](#semantic-model) and [Report](#report) to view the data
+- A [Power Automate](#power-platform) solution to send automatic emails
 
 ## Setup
 
@@ -153,11 +154,11 @@ Once configured, you need to authenticate. Select *Manage connections* in the ri
 
 Close the window, navigate to the *Source* table and click the *Refresh* button in the ribbon. The data should load. 
 
-Now select the blog_categories table and on the bottom right click the plus sign next to *Data destination*. Select *Lakehouse*, authenticate and then chose the Workspace and raw Lakehouse (default is lh_raw). Keep the Table name *blog_categories* and click next. On the following screen, you can keep the default settings and select *Save settings*. Repeat the steps for the *blogs* table.
+Now select the *categories* table and on the bottom right click the plus sign next to *Data destination*. Select *Lakehouse*, authenticate and then chose the Workspace and raw Lakehouse (default is lh_raw). Keep the Table name *categories* and click next. On the following screen, you can keep the default settings and select *Save settings*. Repeat the steps for the *blogs* and *blogs_categories* table.
 
 ![Screenshot of the data destination](resources/imgs/docs/data-destination.png)
 
-When completed, click the *Publish* button on the bottom right. The Dataflow will save and directly start the refresh. Wait a few minutes for the data to refresh to complete (you will see a little moving circle next to the Refreshed date) and confirm that both tables appear in the raw Lakehouse, see screenshots below. You might need to refesh the tables by right clicking on the *Tables* folder in the Lakehouse and selecting *Refresh*, if you don't see them right away. 
+When completed, click the *Publish* button on the bottom right. The Dataflow will save and directly start the refresh. Wait a few minutes for the data to refresh to complete (you will see a little moving circle next to the Refreshed date) and confirm that all tables appear in the raw Lakehouse, see screenshots below. You might need to refesh the tables by right clicking on the *Tables* folder in the Lakehouse and selecting *Refresh*, if you don't see them right away. 
 
 ![Screenshot of the dataflow refreshing](resources/imgs/docs/df-refresh.png)
 
@@ -168,9 +169,24 @@ Now navigate to the second lakehouse (lh_transformed) and complete the following
 - Select *Next* and *Create*
 - Make sure that both tables appear in the Lakehouse
 
+### Power BI elements
 
 
-### Power Platform (NOT COMPLETE, SKIP FOR NOW)
+#### Semantic model
+Now it is time to create the semantic model. For that, start by running the notebook *nb_setup_semanticmodel* which should already be in your workspace, as it was imported together with the other notebooks. 
+Once it completed, you should have a semantic model called *sm_blogs* in your workspace. Open the semantic model and select *Open data model* in the top menu. You will notice that the tables have a little orange warning sign next to their name. Chose *Edit tables* in the Home tab, expand *dbo* and *Tables* and make sure that all tables are selected. 
+
+![A screenshot of the table selection for the semantic model.](resources/imgs/docs/sm-table-selection.png)
+
+Click *Confirm*, which will update the connections and the warning triangles should disapear. 
+
+<u>Note:</u> If you changed the Lakehouse names in the CONFIG file, this step might not work and you will potentially need to rebuild the semantic model. 
+
+#### Report
+
+Download the [Blogs PBIT template](powerbi/Blogs.pbit) from Github and store it locally on your PC. Open it in Power BI Desktop (If you don't have it installed, you can [download it here](https://www.microsoft.com/en-us/download/details.aspx?id=58494)). If you are already logged in it might connect you automatically to the semantic model and display the report, otherwise it will prompt you to chose the semantic model (*sm_blogs*) from your workspace. Once selected, it should display the report. You can now save it as .PBIX file on your machine (e.g. in OneDrive) and publish it to the workspace. 
+
+### Power Platform
 
 Now we need to import the the solution into Power Platform, to create the Power Automate Flow that will send the newsletter. First, download the solution template (.zip) from Github: [Blogs.zip](powerplatform/Blogs_1_0_0_1.zip).
 
@@ -178,8 +194,21 @@ Navigate and login to https://make.powerautomate.com/ and select *Solutions* in 
 
 ![A screenshot of the connection setup in Power Automate](resources/imgs/docs/pa-connections-import.png)
 
-Importing a solution can take a bit of time, we will continue with the following steps and come back to test at a later point. 
+Importing a solution can take a bit of time (about 5-10 mins), so now is a great time to go and grab a cup of coffee! 
 
+Once imported, open the solution (it is called *Blogs*) and you will find three *Environment variables* that you need to set:
+- **FabricWorkspaceId:** The Id of the Workspace
+- **FabricSemanticModelId:** The Id of the Semantic Model
+- **NewsletterRecipient:** The Email address of the newsletter recipient. 
+
+You can find the WorkspaceId and the SemanticModelId very easily by opening the semantic model and looking at the browser URL. The URL will have the following format:
+- app.fabric.microsoft.com/groups/*{WorkspaceId}*/datasets/*{SemanticModelId}*/details
+
+See also screenshot below. 
+
+![A screenshot of the URL for the semantic model](resources/imgs/docs/semanticmodel-url.png)
+
+That's it. Feel free to update the *Send Newsletter* Flow as you see fit, e.g. changing the schedule or the email recipients (you can adapt them directly in the Outlook Send Email action if you want more than one recipient). The flow currently sends a summary of all blogs that were published on the current and the previous day, which is coded into the DAX query. 
 
 ## Run the solution
 
@@ -189,3 +218,5 @@ To run the solution, the following steps need to be taken in sequence:
 3. Run notebook *nb_get_feeds* to retrieve the feeds
 4. Run notebook *nb_get_blogs* to get the blogposts
 5. Run notebook *nb_create_summary* to generate the summaries with OpenAI
+6. Make sure the semantic model refreshed (it should do so automatically) and the report shows data
+7. Run the *Send Newsletter* Flow
