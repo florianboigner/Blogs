@@ -126,8 +126,8 @@ By doing so, it will get access to all the variables defined in the CONFIG, and 
 By executing the notebook to setup the environment, an *Environment* item was created as well (default name *environment_blogs*). This represents a Spark environment that can be used to install libraries and configure Spark settings, which can then be passed to the notebooks. The setup already linked the environment to the notebooks, but we still need to customize it. Open the environment, then make the following configurations:
 - Select **Public libraries** in the menu and click on *Add from PyPI*. Add the following libraries:
   - feedparser (tested in version 6.0.11)
-  - trafilatura (tested in version 1.52.0)
-  - openai (tested in version 1.12.2)
+  - trafilatura (tested in version 2.0.0)
+  - openai (tested in version 1.59.8)
 - Select **Spark properties** and add the following entries:
   - sprk.sql.parquet.vorder.enabled | true
   - spark.microsoft.delta.optimizeWrite.enabled | true
