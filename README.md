@@ -83,7 +83,7 @@ Next we want to setup an Azure KeyVault, to securly store our secret. For this, 
 - Region
 - Pricing tier (I recommend *Standard*)
 
-Once completed, navigate to the newly created KeyVault and take noe fo the *Vault URI* that you see on the right side of your screen in the *Overview* section. It will have the format https://{your keyvault name}.vault.azure.net/.
+Once completed, navigate to the newly created KeyVault and take note of the *Vault URI* that you see on the right side of your screen in the *Overview* section. It will have the format https://{your keyvault name}.vault.azure.net/.
 
 Then select *Secrets* in the left menu. Select *Generate/Import* and type a name for your secret (e.g. *blogsopenaikey*) and copy the OpenAI service key (KEY 1) into the Secret value. Take note of the secret name. 
 
@@ -101,7 +101,7 @@ Navigate to [Microsoft Fabric](https://fabric.microsoft.com/) and select the *Da
 
 #### Import notebooks and create environment
 
-Download the [CONFIG.ipnyb](notebooks/CONFIG.ipnyb) and [nb_setup Environment.ipnyb](notebooks/nb_setup Environment.ipnyb) notebooks from Github. In you Fabric workspace, select *Import -> Notebook -> From this computer* and upload both notebooks. 
+Download the [CONFIG.ipnyb](notebooks/CONFIG.ipnyb) and [nb_setup_environment.ipnyb](notebooks/nb_setup_environment.ipnyb) notebooks from Github. In you Fabric workspace, select *Import -> Notebook -> From this computer* and upload both notebooks. 
 
 ![Screenshot of Fabric importing](resources/imgs/docs/fabric-import-notebook.png)
 
@@ -125,9 +125,9 @@ By doing so, it will get access to all the variables defined in the CONFIG, and 
 
 By executing the notebook to setup the environment, an *Environment* item was created as well (default name *environment_blogs*). This represents a Spark environment that can be used to install libraries and configure Spark settings, which can then be passed to the notebooks. The setup already linked the environment to the notebooks, but we still need to customize it. Open the environment, then make the following configurations:
 - Select **Public libraries** in the menu and click on *Add from PyPI*. Add the following libraries:
-  - feedparser
-  - trafilatura
-  - openai
+  - feedparser (tested in version 6.0.11)
+  - trafilatura (tested in version 2.0.0)
+  - openai (tested in version 1.59.8)
 - Select **Spark properties** and add the following entries:
   - sprk.sql.parquet.vorder.enabled | true
   - spark.microsoft.delta.optimizeWrite.enabled | true
