@@ -75,7 +75,7 @@ You will see a summary screen of your deployment. You can close the window or te
 
 ### Azure KeyVault
 
-Next we want to setup an Azure KeyVault, to securly store our secret. For this, search for *Key vaults* in the Azure portal and select *Create*. Fill in the following details and keep the rest with default settings: 
+Next we want to setup an Azure Key Vault (KV), to securly store our secret. For this, search for *Key vaults* in the Azure portal and select *Create*. Fill in the following details and keep the rest with default settings: 
 
 - Subscription
 - Resource group (can be the same than before or a different one)
@@ -83,12 +83,27 @@ Next we want to setup an Azure KeyVault, to securly store our secret. For this, 
 - Region
 - Pricing tier (I recommend *Standard*)
 
-Once completed, navigate to the newly created KeyVault and take note of the *Vault URI* that you see on the right side of your screen in the *Overview* section. It will have the format https://{your keyvault name}.vault.azure.net/.
+Once completed, navigate to the newly created KV and take note of the *Vault URI* that you see on the right side of your screen in the *Overview* section. It will have the format https://{your keyvault name}.vault.azure.net/.
 
 Then select *Secrets* in the left menu. Select *Generate/Import* and type a name for your secret (e.g. *blogsopenaikey*) and copy the OpenAI service key (KEY 1) into the Secret value. Take note of the secret name. 
 
 In the left section *Access control (IAM)* select *Add -> Add role assignment*. Assign yourself the following permissions:
 - **Key Vault Secrets Office**: Allows you to see and change the secrets that you created. 
+
+#### Network configuration (optional)
+
+If the Azure Key Vault (KV) has public network access disabled, you need to add a managed private endpoint connection to the Fabric workspace. This step is not required, if public access is enabled on the KV. 
+
+Navigate to the KV and select *Properties*, where you can copy the **Resource ID**. This should look something like */subscriptions/{subscription ID}/resourceGroups/{resource group name}/providers/Microsoft.KeyVault/vaults/{key vault name}*.
+Then navigate to the Fabric workspace settings and the *Network security* menu. Click on *Create* and fill in the following details:
+- Managed private endpoint name: You can chose a name that represents your KV
+- Resource identifier: Paste the Resource ID that you copied earlier
+- Target sub-resource: Azure Key Vault
+- Request message (optional): A message that will show in the KV settings when you approve the connection. Typically a reference to the Fabric workspace. 
+
+The creating of the endpoint will take a few minutes. Once the status of the activation shows "Succeeded", you can navigate back to the KV and open the *Networking* settings and the *Private endpoint connections* tab. Approve the private endpoint request from your Fabric workspace. 
+
+![screenshot of private endpoint config in KV](resources\imgs\docs\keyvault_privateendpoint.png)
 
 ### Fabric
 
